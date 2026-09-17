@@ -4,6 +4,7 @@ import { txEnv } from '@core/globalData';
 import consoleFactory from '@lib/console';
 import type { SessToolsType } from "./middlewares/sessionMws";
 import { ReactAuthDataType } from "@shared/authApiTypes";
+import { safeCompare } from "@lib/misc";
 const console = consoleFactory(modulename);
 
 
@@ -259,7 +260,7 @@ export const nuiAuthLogic = (
         }
 
         // Check token value
-        if (reqHeader['x-txadmin-token'] !== txCore.webServer.luaComToken) {
+        if (!safeCompare(reqHeader['x-txadmin-token'], txCore.webServer.luaComToken)) {
             const expected = txCore.webServer.luaComToken;
             const censoredExpected = expected.slice(0, 6) + '...' + expected.slice(-6);
             console.verbose.warn(`NUI Auth Failed: token received '${reqHeader['x-txadmin-token']}' !== expected '${censoredExpected}'.`);

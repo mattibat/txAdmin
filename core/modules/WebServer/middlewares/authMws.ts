@@ -4,6 +4,7 @@ import { checkRequestAuth } from "../authLogic";
 import { ApiAuthErrorResp, ApiToastResp, GenericApiErrorResp } from "@shared/genericApiTypes";
 import { InitializedCtx } from '../ctxTypes';
 import { txHostConfig } from '@core/globalData';
+import { safeCompare } from '@lib/misc';
 const console = consoleFactory(modulename);
 
 const webLogoutPage = `<style>
@@ -82,7 +83,7 @@ export const hostAuthMw = async (ctx: InitializedCtx, next: Function) => {
             docs,
         });
     }
-    if (tokenProvided !== txHostConfig.hostApiToken) {
+    if (!safeCompare(tokenProvided, txHostConfig.hostApiToken)) {
         return ctx.send({
             error: 'invalid token',
             desc: 'the token provided does not match the TXHOST_API_TOKEN environment variable',
@@ -102,7 +103,7 @@ export const hostAuthMw = async (ctx: InitializedCtx, next: Function) => {
 export const intercomAuthMw = async (ctx: InitializedCtx, next: Function) => {
     if (
         typeof ctx.request.body?.txAdminToken !== 'string'
-        || ctx.request.body.txAdminToken !== txCore.webServer.luaComToken
+        || !safeCompare(ctx.request.body.txAdminToken, txCore.webServer.luaComToken)
     ) {
         return ctx.send({ error: 'invalid token' });
     }

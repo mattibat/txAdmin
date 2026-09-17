@@ -2,6 +2,14 @@ import chalk from 'chalk';
 import dateFormat from 'dateformat';
 import humanizeDuration, { HumanizerOptions } from 'humanize-duration';
 import { DeepReadonly } from 'utility-types';
+import { timingSafeEqual } from 'node:crypto';
+
+export const safeCompare = (a: string, b: string) => {
+    const bufA = Buffer.from(a);
+    const bufB = Buffer.from(b);
+    if (bufA.length !== bufB.length) return false;
+    return timingSafeEqual(bufA, bufB);
+};
 
 export const regexHoursMinutes = /^(?<hours>[01]?[0-9]|2[0-4]):(?<minutes>[0-5][0-9])$/;
 
