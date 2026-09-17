@@ -119,12 +119,12 @@ export default class UpdateChecker {
                 if (updates.txa.isImportant) {
                     console.error('This version of txAdmin is outdated.');
                     console.error('Please update as soon as possible.');
-                    console.error('For more information: https://discord.gg/uAmsGa2');
+                    console.error('For more information: https://txadmin.gg/discord');
                 } else {
                     console.warn('This version of txAdmin is outdated.');
                     console.warn('A patch (bug fix) update is available for txAdmin.');
                     console.warn('If you are experiencing any kind of issue, please update now.');
-                    console.warn('For more information: https://discord.gg/uAmsGa2');
+                    console.warn('For more information: https://txadmin.gg/discord');
                 }
             }
         }

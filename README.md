@@ -7,7 +7,7 @@
         Today, <b>txAdmin</b> is <i>the</i> <b>full featured</b> web panel & in-game menu to Manage & Monitor your FiveM/RedM Server, in use by over <strong>29.000</strong> servers worldwide at any given time!
     </p>
     <p align="center">
-        Join our Discord Server: &nbsp; <a href="https://discord.gg/AFAAXzq"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
+        Join our Discord Server: &nbsp; <a href="https://txadmin.gg/discord"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
     </p>
     <p align="center">
         <a href="https://zap-hosting.com/txadmin4" target="_blank" rel="noopener">

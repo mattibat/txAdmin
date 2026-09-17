@@ -25,7 +25,7 @@ export default function TmpPageHeader() {
                         topLabel="Documentation"
                         topLink="https://github.com/citizenfx/txAdmin"
                         bottomLabel="Support"
-                        bottomLink="https://discord.gg/txAdmin"
+                        bottomLink="https://txadmin.gg/discord"
                     />
                 </PageHeader>
             </Wrapper>
