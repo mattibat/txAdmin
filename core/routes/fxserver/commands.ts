@@ -5,6 +5,100 @@ import { ApiToastResp } from '@shared/genericApiTypes';
 const console = consoleFactory(modulename);
 
 
+type CommandAction = {
+    permission: string;
+    handler: (ctx: AuthedCtx, parameter: string) => ApiToastResp;
+};
+
+const commandActions: Record<string, CommandAction> = {
+    admin_broadcast: {
+        permission: 'announcement',
+        handler: (ctx, parameter) => {
+            const message = parameter.trim();
+
+            // Dispatch `txAdmin:events:announcement`
+            txCore.fxRunner.sendEvent('announcement', {
+                message,
+                author: ctx.admin.name,
+            });
+            ctx.admin.logAction(`Sending announcement: ${parameter}`);
+
+            // Sending discord announcement
+            const publicAuthor = txCore.adminStore.getAdminPublicName(ctx.admin.name, 'message');
+            txCore.discordBot.sendAnnouncement({
+                type: 'info',
+                title: {
+                    key: 'nui_menu.misc.announcement_title',
+                    data: { author: publicAuthor }
+                },
+                description: message
+            });
+
+            return { type: 'success', msg: 'Announcement command sent.' };
+        },
+    },
+    kick_all: {
+        permission: 'control.server',
+        handler: (ctx, parameter) => {
+            const kickReason = parameter.trim() || txCore.translator.t('kick_messages.unknown_reason');
+            const dropMessage = txCore.translator.t(
+                'kick_messages.everyone',
+                { reason: kickReason }
+            );
+            ctx.admin.logAction(`Kicking all players: ${kickReason}`);
+            // Dispatch `txAdmin:events:playerKicked`
+            txCore.fxRunner.sendEvent('playerKicked', {
+                target: -1,
+                author: ctx.admin.name,
+                reason: kickReason,
+                dropMessage,
+            });
+            return { type: 'success', msg: 'Kick All command sent.' };
+        },
+    },
+    restart_res: {
+        permission: 'commands.resources',
+        handler: (ctx, parameter) => {
+            ctx.admin.logAction(`Restarted resource "${parameter}"`);
+            txCore.fxRunner.sendCommand('restart', [parameter], ctx.admin.name);
+            return { type: 'warning', msg: 'Resource restart command sent.' };
+        },
+    },
+    start_res: {
+        permission: 'commands.resources',
+        handler: (ctx, parameter) => {
+            ctx.admin.logAction(`Started resource "${parameter}"`);
+            txCore.fxRunner.sendCommand('start', [parameter], ctx.admin.name);
+            return { type: 'warning', msg: 'Resource start command sent.' };
+        },
+    },
+    ensure_res: {
+        permission: 'commands.resources',
+        handler: (ctx, parameter) => {
+            ctx.admin.logAction(`Ensured resource "${parameter}"`);
+            txCore.fxRunner.sendCommand('ensure', [parameter], ctx.admin.name);
+            return { type: 'warning', msg: 'Resource ensure command sent.' };
+        },
+    },
+    stop_res: {
+        permission: 'commands.resources',
+        handler: (ctx, parameter) => {
+            ctx.admin.logAction(`Stopped resource "${parameter}"`);
+            txCore.fxRunner.sendCommand('stop', [parameter], ctx.admin.name);
+            return { type: 'warning', msg: 'Resource stop command sent.' };
+        },
+    },
+    refresh_res: {
+        permission: 'commands.resources',
+        handler: (ctx) => {
+            ctx.admin.logAction(`Refreshed resources`);
+            txCore.fxRunner.sendCommand('refresh', [], ctx.admin.name);
+            return { type: 'warning', msg: 'Refresh command sent.' };
+        },
+    },
+};
+
+
 /**
  * Handle all the server commands
  */
@@ -38,128 +132,19 @@ export default async function FXServerCommands(ctx: AuthedCtx) {
         });
     }
 
-
-    //==============================================
-    if (action == 'admin_broadcast') {
-        if (!ensurePermission(ctx, 'announcement')) return false;
-        const message = (parameter ?? '').trim();
-
-        // Dispatch `txAdmin:events:announcement`
-        txCore.fxRunner.sendEvent('announcement', {
-            message,
-            author: ctx.admin.name,
-        });
-        ctx.admin.logAction(`Sending announcement: ${parameter}`);
-
-        // Sending discord announcement
-        const publicAuthor = txCore.adminStore.getAdminPublicName(ctx.admin.name, 'message');
-        txCore.discordBot.sendAnnouncement({
-            type: 'info',
-            title: {
-                key: 'nui_menu.misc.announcement_title',
-                data: { author: publicAuthor }
-            },
-            description: message
-        });
-
-        return ctx.send<ApiToastResp>({
-            type: 'success',
-            msg: 'Announcement command sent.',
-        });
-
-    //==============================================
-    } else if (action == 'kick_all') {
-        if (!ensurePermission(ctx, 'control.server')) return false;
-        const kickReason = (parameter ?? '').trim() || txCore.translator.t('kick_messages.unknown_reason');
-        const dropMessage = txCore.translator.t(
-            'kick_messages.everyone',
-            { reason: kickReason }
-        );
-        ctx.admin.logAction(`Kicking all players: ${kickReason}`);
-        // Dispatch `txAdmin:events:playerKicked`
-        txCore.fxRunner.sendEvent('playerKicked', {
-            target: -1,
-            author: ctx.admin.name,
-            reason: kickReason,
-            dropMessage,
-        });
-        return ctx.send<ApiToastResp>({
-            type: 'success',
-            msg: 'Kick All command sent.',
-        });
-
-    //==============================================
-    } else if (action == 'restart_res') {
-        if (!ensurePermission(ctx, 'commands.resources')) return false;
-        ctx.admin.logAction(`Restarted resource "${parameter}"`);
-        txCore.fxRunner.sendCommand('restart', [parameter], ctx.admin.name);
-        return ctx.send<ApiToastResp>({
-            type: 'warning',
-            msg: 'Resource restart command sent.',
-        });
-
-    //==============================================
-    } else if (action == 'start_res') {
-        if (!ensurePermission(ctx, 'commands.resources')) return false;
-        ctx.admin.logAction(`Started resource "${parameter}"`);
-        txCore.fxRunner.sendCommand('start', [parameter], ctx.admin.name);
-        return ctx.send<ApiToastResp>({
-            type: 'warning',
-            msg: 'Resource start command sent.',
-        });
-
-    //==============================================
-    } else if (action == 'ensure_res') {
-        if (!ensurePermission(ctx, 'commands.resources')) return false;
-        ctx.admin.logAction(`Ensured resource "${parameter}"`);
-        txCore.fxRunner.sendCommand('ensure', [parameter], ctx.admin.name);
-        return ctx.send<ApiToastResp>({
-            type: 'warning',
-            msg: 'Resource ensure command sent.',
-        });
-
-    //==============================================
-    } else if (action == 'stop_res') {
-        if (!ensurePermission(ctx, 'commands.resources')) return false;
-        ctx.admin.logAction(`Stopped resource "${parameter}"`);
-        txCore.fxRunner.sendCommand('stop', [parameter], ctx.admin.name);
-        return ctx.send<ApiToastResp>({
-            type: 'warning',
-            msg: 'Resource stop command sent.',
-        });
-
-    //==============================================
-    } else if (action == 'refresh_res') {
-        if (!ensurePermission(ctx, 'commands.resources')) return false;
-        ctx.admin.logAction(`Refreshed resources`);
-        txCore.fxRunner.sendCommand('refresh', [], ctx.admin.name);
-        return ctx.send<ApiToastResp>({
-            type: 'warning',
-            msg: 'Refresh command sent.',
-        });
-
-    //==============================================
-    } else {
+    const command = commandActions[action];
+    if (!command) {
         return ctx.send<ApiToastResp>({
             type: 'error',
             msg: 'Unknown Action.',
         });
     }
-};
-
-
-//================================================================
-/**
- * Wrapper function to check permission and give output if denied
- */
-function ensurePermission(ctx: AuthedCtx, perm: string) {
-    if (ctx.admin.testPermission(perm, modulename)) {
-        return true;
-    } else {
-        ctx.send<ApiToastResp>({
+    if (!ctx.admin.testPermission(command.permission, modulename)) {
+        return ctx.send<ApiToastResp>({
             type: 'error',
             msg: 'You don\'t have permission to execute this action.',
         });
-        return false;
     }
-}
+
+    return ctx.send<ApiToastResp>(command.handler(ctx, parameter));
+};
