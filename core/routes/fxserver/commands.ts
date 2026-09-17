@@ -10,8 +10,8 @@ const console = consoleFactory(modulename);
  */
 export default async function FXServerCommands(ctx: AuthedCtx) {
     if (
-        typeof ctx.request.body.action === 'undefined'
-        || typeof ctx.request.body.parameter === 'undefined'
+        typeof ctx.request.body.action !== 'string'
+        || typeof ctx.request.body.parameter !== 'string'
     ) {
         return ctx.send<ApiToastResp>({
             type: 'error',
