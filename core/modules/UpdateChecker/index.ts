@@ -148,7 +148,7 @@ export default class UpdateChecker {
     Other relevant apis:
         https://changelogs-live.fivem.net/api/changelog/versions/win32/server? (the one being used below)
         https://changelogs-live.fivem.net/api/changelog/versions
-        https://api.github.com/repos/tabarra/txAdmin/releases (changelog in [].body)
+        https://api.github.com/repos/citizenfx/txAdmin/releases (changelog in [].body)
 
     NOTE: old logic
     if == recommended, you're fine

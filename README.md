@@ -79,7 +79,7 @@ Also, check our [Feature Graveyard](docs/feature-graveyard.md) for the features 
 
 
 ## License, Credits and Thanks
-- This project is licensed under the [MIT License](https://github.com/tabarra/txAdmin/blob/master/LICENSE);
+- This project is licensed under the [MIT License](https://github.com/citizenfx/txAdmin/blob/master/LICENSE);
 - ["Kick" button icons](https://www.flaticon.com/free-icon/users-avatar_8188385) made by __SeyfDesigner__ from [www.flaticon.com](https://www.flaticon.com);
 - Warning Sounds ([1](https://freesound.org/people/Ultranova105/sounds/136756/)/[2](https://freesound.org/people/Ultranova105/sounds/136754/)) made by __Ultranova105__ are licensed under [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/);
 - [Announcement Sound](https://freesound.org/people/IENBA/sounds/545495/) made by __IENBA__ is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/);
