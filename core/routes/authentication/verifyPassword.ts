@@ -20,7 +20,7 @@ const maxLoginAttempts = 10;
 const lockoutMinutes = 5;
 const failedLoginAttempts = new Map<string, { count: number, lockedUntil: number }>();
 
-const getLoginLockKey = (ip: string, username: string) => `${ip}|${username}`;
+const getLoginLockKey = (ip: string, username: string) => `${ip}|${username.toLowerCase()}`;
 
 const isLoginLocked = (ip: string, username: string) => {
     const entry = failedLoginAttempts.get(getLoginLockKey(ip, username));
